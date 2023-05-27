@@ -1,0 +1,5 @@
+comment = 'dummy_index_am:  Created by pgrx'
+default_version = '@CARGO_VERSION@'
+module_pathname = '$libdir/dummy_index_am'
+relocatable = false
+superuser = true
