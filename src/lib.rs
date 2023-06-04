@@ -25,8 +25,11 @@ struct DummyIndexOptions {
     option_string_null_offset: c_int,
 }
 
-#[pgrx::pg_extern]
-fn pgvectors_empty_amhandler(
+#[pgrx::pg_extern(sql = "
+    CREATE OR REPLACE FUNCTION dummy_index_amhandler(internal) RETURNS index_am_handler PARALLEL SAFE IMMUTABLE STRICT COST 0.0001 LANGUAGE c AS 'MODULE_PATHNAME', '@FUNCTION_NAME@';
+    CREATE ACCESS METHOD zombodb TYPE INDEX HANDLER dummy_index_amhandler;
+")]
+fn dummy_index_amhandler(
     _fcinfo: pg_sys::FunctionCallInfo,
 ) -> pgrx::PgBox<pgrx::pg_sys::IndexAmRoutine> {
     let mut am_routine = unsafe {
@@ -292,3 +295,9 @@ unsafe extern "C" fn direscan(
 
 #[pg_guard]
 unsafe extern "C" fn diendscan(_scan: IndexScanDesc) {}
+
+
+#[allow(non_snake_case)]
+#[pg_guard]
+pub unsafe extern "C" fn _PG_init() {
+}
